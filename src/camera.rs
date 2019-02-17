@@ -35,6 +35,10 @@ impl CameraState {
         self.direction = dir;
     }
 
+    pub fn get_direction(&self) -> (f32, f32, f32) {
+        self.direction
+    }
+
     pub fn get_perspective(&self) -> [[f32; 4]; 4] {
         let fov: f32 = 3.141592 / 2.0;
         let zfar = 1024.0;

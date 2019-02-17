@@ -14,8 +14,10 @@ pub enum Block {
 struct Vertex {
     position: [u8; 3],
     tex_coords: [f32; 2],
+    normal: [f32; 3],
+    material: [f32; 2],
 }
-implement_vertex!(Vertex, position, tex_coords);
+implement_vertex!(Vertex, position, tex_coords, normal, material);
 
 
 pub struct Chunk<'a> {
@@ -49,6 +51,8 @@ impl<'a> Chunk<'a> {
         let mut vertices = [Vertex {
             position: [0, 0, 0],
             tex_coords: [0., 0.],
+            normal: [0., 0., 0.],
+            material: [0., 1.],
         }; CX * CY * CZ * 6 * 6];
         let mut i: usize = 0;
         for x in 0..CX {
@@ -59,35 +63,47 @@ impl<'a> Chunk<'a> {
                         _ => {
                             if x > 0 {
                                 if let Block::Air = self.block[x - 1][y][z] {
-                                    eprintln!("({}, {}, {}), x>0, x-1 == Air", x, y, z);
                                     vertices[i] = Vertex {
                                         position: [x as u8, y as u8, z as u8],
                                         tex_coords: [0., 0.],
+                                        normal: [-1., 0. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
+
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8, y as u8, z as u8 + 1],
                                         tex_coords: [1., 0.],
+                                        normal: [-1., 0. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8, y as u8 + 1, z as u8],
                                         tex_coords: [0., 1.],
+                                        normal: [-1., 0. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8, y as u8, z as u8 + 1],
                                         tex_coords: [1., 0.],
-                                    };
-                                    i += 1;
-                                    vertices[i] = Vertex {
-                                        position: [x as u8, y as u8 + 1, z as u8],
-                                        tex_coords: [0., 1.],
+                                        normal: [-1., 0. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8, y as u8 + 1, z as u8 + 1],
                                         tex_coords: [1., 1.],
+                                        normal: [-1., 0. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
+                                    };
+                                    i += 1;
+                                    vertices[i] = Vertex {
+                                        position: [x as u8, y as u8 + 1, z as u8],
+                                        tex_coords: [0., 1.],
+                                        normal: [-1., 0. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                 }
@@ -95,35 +111,46 @@ impl<'a> Chunk<'a> {
 
                             if x + 1 < CX {
                                 if let Block::Air = self.block[x + 1][y][z] {
-                                    eprintln!("({}, {}, {}), x+1<CY, x+1 == Air", x, y, z);
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8, z as u8 + 1],
                                         tex_coords: [0., 0.],
+                                        normal: [1., 0. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8, z as u8],
                                         tex_coords: [1., 0.],
+                                        normal: [1., 0. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8 + 1, z as u8 + 1],
                                         tex_coords: [0., 1.],
+                                        normal: [1., 0. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8, z as u8],
                                         tex_coords: [1., 0.],
-                                    };
-                                    i += 1;
-                                    vertices[i] = Vertex {
-                                        position: [x as u8 + 1, y as u8 + 1, z as u8 + 1],
-                                        tex_coords: [0., 1.],
+                                        normal: [1., 0. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8 + 1, z as u8],
                                         tex_coords: [1., 1.],
+                                        normal: [1., 0. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
+                                    };
+                                    i += 1;
+                                    vertices[i] = Vertex {
+                                        position: [x as u8 + 1, y as u8 + 1, z as u8 + 1],
+                                        tex_coords: [0., 1.],
+                                        normal: [1., 0. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                 }
@@ -131,35 +158,46 @@ impl<'a> Chunk<'a> {
 
                             if y > 0 {
                                 if let Block::Air = self.block[x][y - 1][z] {
-                                    eprintln!("({}, {}, {}), y>0, y-1 == Air", x, y, z);
                                     vertices[i] = Vertex {
                                         position: [x as u8, y as u8, z as u8],
                                         tex_coords: [0., 0.],
+                                        normal: [0., -1. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8, z as u8],
                                         tex_coords: [1., 0.],
+                                        normal: [0., -1. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8, y as u8, z as u8 + 1],
                                         tex_coords: [0., 1.],
+                                        normal: [0., -1. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8, z as u8],
                                         tex_coords: [1., 0.],
-                                    };
-                                    i += 1;
-                                    vertices[i] = Vertex {
-                                        position: [x as u8, y as u8, z as u8 + 1],
-                                        tex_coords: [0., 1.],
+                                        normal: [0., -1. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8, z as u8 + 1],
                                         tex_coords: [1., 1.],
+                                        normal: [0., -1. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
+                                    };
+                                    i += 1;
+                                    vertices[i] = Vertex {
+                                        position: [x as u8, y as u8, z as u8 + 1],
+                                        tex_coords: [0., 1.],
+                                        normal: [0., -1. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                 }
@@ -167,35 +205,46 @@ impl<'a> Chunk<'a> {
 
                             if y + 1 < CY {
                                 if let Block::Air = self.block[x][y + 1][z] {
-                                    eprintln!("({}, {}, {}), y+1<CY, y+1 == Air", x, y, z);
                                     vertices[i] = Vertex {
-                                        position: [x as u8, y as u8 + 1, z as u8],
+                                        position: [x as u8, y as u8 + 1, z as u8 + 1],
                                         tex_coords: [0., 0.],
-                                    };
-                                    i += 1;
-                                    vertices[i] = Vertex {
-                                        position: [x as u8 + 1, y as u8 + 1, z as u8],
-                                        tex_coords: [0., 1.],
-                                    };
-                                    i += 1;
-                                    vertices[i] = Vertex {
-                                        position: [x as u8, y as u8 + 1, z as u8 + 1],
-                                        tex_coords: [1., 0.],
-                                    };
-                                    i += 1;
-                                    vertices[i] = Vertex {
-                                        position: [x as u8 + 1, y as u8 + 1, z as u8],
-                                        tex_coords: [0., 1.],
-                                    };
-                                    i += 1;
-                                    vertices[i] = Vertex {
-                                        position: [x as u8, y as u8 + 1, z as u8 + 1],
-                                        tex_coords: [1., 0.],
+                                        normal: [0., 1. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8 + 1, z as u8 + 1],
+                                        tex_coords: [1., 0.],
+                                        normal: [0., 1. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
+                                    };
+                                    i += 1;
+                                    vertices[i] = Vertex {
+                                        position: [x as u8, y as u8 + 1, z as u8],
+                                        tex_coords: [0., 1.],
+                                        normal: [0., 1. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
+                                    };
+                                    i += 1;
+                                    vertices[i] = Vertex {
+                                        position: [x as u8 + 1, y as u8 + 1, z as u8 + 1],
+                                        tex_coords: [1., 0.],
+                                        normal: [0., 1. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
+                                    };
+                                    i += 1;
+                                    vertices[i] = Vertex {
+                                        position: [x as u8 + 1, y as u8 + 1, z as u8],
                                         tex_coords: [1., 1.],
+                                        normal: [0., 1. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
+                                    };
+                                    i += 1;
+                                    vertices[i] = Vertex {
+                                        position: [x as u8, y as u8 + 1, z as u8],
+                                        tex_coords: [0., 1.],
+                                        normal: [0., 1. ,0.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                 }
@@ -203,35 +252,46 @@ impl<'a> Chunk<'a> {
 
                             if z > 0 {
                                 if let Block::Air = self.block[x][y][z - 1] {
-                                    eprintln!("({}, {}, {}), z>0, z-1 == Air", x, y, z);
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8, z as u8],
                                         tex_coords: [0., 0.],
+                                        normal: [0., 0., -1.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8, y as u8, z as u8],
                                         tex_coords: [1., 0.],
+                                        normal: [0., 0., -1.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8 + 1, z as u8],
                                         tex_coords: [0., 1.],
+                                        normal: [0., 0., -1.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8, y as u8, z as u8],
                                         tex_coords: [1., 0.],
-                                    };
-                                    i += 1;
-                                    vertices[i] = Vertex {
-                                        position: [x as u8 + 1, y as u8 + 1, z as u8],
-                                        tex_coords: [0., 1.],
+                                        normal: [0., 0., -1.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8, y as u8 + 1, z as u8],
                                         tex_coords: [1., 1.],
+                                        normal: [0., 0., -1.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
+                                    };
+                                    i += 1;
+                                    vertices[i] = Vertex {
+                                        position: [x as u8 + 1, y as u8 + 1, z as u8],
+                                        tex_coords: [0., 1.],
+                                        normal: [0., 0., -1.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                 }
@@ -239,35 +299,46 @@ impl<'a> Chunk<'a> {
 
                             if z + 1 < CZ {
                                 if let Block::Air = self.block[x][y][z + 1] {
-                                    eprintln!("({}, {}, {}), z+1<CY, z+1 == Air", x, y, z);
                                     vertices[i] = Vertex {
                                         position: [x as u8, y as u8, z as u8 + 1],
                                         tex_coords: [0., 0.],
+                                        normal: [0., 0., 1.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8, z as u8 + 1],
                                         tex_coords: [1., 0.],
+                                        normal: [0., 0., 1.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8, y as u8 + 1, z as u8 + 1],
                                         tex_coords: [0., 1.],
+                                        normal: [0., 0., 1.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8, z as u8 + 1],
                                         tex_coords: [1., 0.],
-                                    };
-                                    i += 1;
-                                    vertices[i] = Vertex {
-                                        position: [x as u8, y as u8 + 1, z as u8 + 1],
-                                        tex_coords: [0., 1.],
+                                        normal: [0., 0., 1.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                     vertices[i] = Vertex {
                                         position: [x as u8 + 1, y as u8 + 1, z as u8 + 1],
-                                        tex_coords: [0., 0.],
+                                        tex_coords: [1., 1.],
+                                        normal: [0., 0., 1.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
+                                    };
+                                    i += 1;
+                                    vertices[i] = Vertex {
+                                        position: [x as u8, y as u8 + 1, z as u8 + 1],
+                                        tex_coords: [0., 1.],
+                                        normal: [0., 0., 1.],
+                                        material: [(self.block[x][y][z] as u8).into(), 1.0],
                                     };
                                     i += 1;
                                 }
@@ -296,6 +367,7 @@ impl<'a> Chunk<'a> {
                 write: true,
                 ..Default::default()
             },
+            backface_culling: glium::draw_parameters::BackfaceCullingMode::CullClockwise,
             ..Default::default()
         };
         let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);

@@ -11,3 +11,13 @@ futures = "*"
 bytes = "*"
 rodio = "*"
 image = "*"
+serde = { version = "*", features = ["derive"] }
+rmp-serde = "*"
+
+[[bin]]
+name = "server"
+path = "src/server.rs"
+
+[[bin]]
+name = "client"
+path = "src/client.rs"
